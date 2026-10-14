@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complicité — Dashboard Administrateur & Développeur</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0818;
+      --bg-card: rgba(22, 18, 46, 0.75);
+      --bg-card-hover: rgba(32, 26, 66, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(236, 72, 153, 0.3);
+      --pink: #ec4899;
+      --pink-glow: rgba(236, 72, 153, 0.4);
+      --purple: #8b5cf6;
+      --cyan: #06b6d4;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(ellipse at 15% 15%, rgba(139, 92, 246, 0.15) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, rgba(236, 72, 153, 0.12) 0%, transparent 45%);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .admin-container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-badge {
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      color: #c4b5fd;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: #fff;
+      box-shadow: 0 4px 15px var(--pink-glow);
+    }
+    .btn-primary:hover { transform: translateY(-1px); opacity: 0.95; }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.12); }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.3); color: #fff; }
+
+    /* STATS OVERVIEW */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+    .icon-pink { background: rgba(236, 72, 153, 0.15); color: var(--pink); }
+    .icon-green { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+    .icon-purple { background: rgba(139, 92, 246, 0.15); color: var(--purple); }
+    .icon-cyan { background: rgba(6, 182, 212, 0.15); color: var(--cyan); }
+    .icon-yellow { background: rgba(245, 158, 11, 0.15); color: var(--yellow); }
+
+    .stat-val { font-size: 1.8rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; }
+    .stat-lbl { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* TABS */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 12px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      color: var(--pink);
+      border-bottom-color: var(--pink);
+    }
+
+    .tab-badge {
+      background: var(--pink);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 12px;
+      margin-left: 6px;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* CARD PANEL */
+    .card-panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* TABLE */
+    .couples-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .couples-table th {
+      padding: 12px 16px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .couples-table td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+
+    .couples-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .couple-code-badge {
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 700;
+      background: rgba(236, 72, 153, 0.15);
+      border: 1px solid var(--border-accent);
+      color: #f472b6;
+      padding: 4px 10px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .player-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .status-dot.online { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .status-dot.offline { background: #64748b; }
+
+    .badge-status {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge-in-game { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-paused { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-waiting { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+    .score-chip {
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 700;
+      color: #fbbf24;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      border-radius: 8px;
+    }
+
+    /* BADGES & STATUTS CADEAUX */
+    .badge-claim-status {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      outline: none;
+    }
+    .badge-claim-en_attente {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+    .badge-claim-en_cours {
+      background: rgba(139, 92, 246, 0.15);
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.35);
+    }
+    .badge-claim-remis {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .badge-new-claim {
+      background: #ef4444;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      margin-left: 6px;
+      animation: pulse-badge 1.8s infinite;
+    }
+    @keyframes pulse-badge {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.08); }
+    }
+
+    /* FILTRES & RECHERCHE */
+    .claims-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .search-input {
+      min-width: 260px;
+      background: rgba(15, 11, 35, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-whatsapp-direct {
+      background: #25D366;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .btn-whatsapp-direct:hover {
+      background: #1eb956;
+      transform: translateY(-1px);
+    }
+
+    /* FORM AJOUT QUESTION */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input, select, textarea {
+      background: rgba(15, 11, 35, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2);
+    }
+
+    /* QUESTIONS LIST */
+    .questions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .q-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .q-card:hover {
+      border-color: var(--border-accent);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .q-cat {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--pink);
+      text-transform: uppercase;
+    }
+
+    .q-text {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .q-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 10px;
+    }
+
+    /* GATE AUTHENTIFICATION ADMIN */
+    #admin-auth-gate {
+      position: fixed;
+      inset: 0;
+      background: #0a0818;
+      background-image: radial-gradient(ellipse at center, rgba(139, 92, 246, 0.18) 0%, transparent 60%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+    .gate-card {
+      background: rgba(22, 18, 46, 0.95);
+      border: 1px solid rgba(236, 72, 153, 0.4);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(236, 72, 153, 0.25);
+      border-radius: 24px;
+      padding: 36px 30px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    .gate-icon { font-size: 3rem; margin-bottom: 12px; }
+    .gate-title { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .gate-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px; }
+    .gate-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    /* MODAL DÉTAILS DEMANDE */
+    .detail-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 8, 24, 0.85);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .detail-card {
+      background: rgba(22, 18, 46, 0.98);
+      border: 1px solid var(--border-accent);
+      border-radius: 20px;
+      padding: 28px;
+      max-width: 550px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.9rem;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: var(--text-muted); font-weight: 600; }
+    .detail-val { font-weight: 700; color: #fff; text-align: right; }
+
+    /* TOAST */
+    .admin-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e1b4b;
+      border: 1px solid var(--pink);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 1000;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      .admin-header { flex-direction: column; align-items: flex-start; }
+      .couples-table th:nth-child(5), .couples-table td:nth-child(5) { display: none; }
+      .claims-toolbar { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-container">
+  
+  <!-- HEADER -->
+  <header class="admin-header">
+    <div class="brand">
+      <div class="brand-logo">Complicité</div>
+      <div class="brand-badge">Console Développeur & Admin</div>
+    </div>
+    <div class="header-actions">
+      <a href="/" class="btn btn-secondary" target="_blank">🎮 Ouvrir le Jeu</a>
+      <button class="btn btn-primary" onclick="refreshData()">🔄 Rafraîchir</button>
+      <button class="btn btn-danger" onclick="adminLogout()" title="Fermer la session">🔒 Déconnexion</button>
+    </div>
+  </header>
+
+  <!-- STATS OVERVIEW -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon icon-pink">💑</div>
+      <div>
+        <div class="stat-val" id="stat-total-couples">0</div>
+        <div class="stat-lbl">Couples enregistrés</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-green">🟢</div>
+      <div>
+        <div class="stat-val" id="stat-active-couples">0</div>
+        <div class="stat-lbl">Parties actives / connectées</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-purple">❓</div>
+      <div>
+        <div class="stat-val" id="stat-custom-q">0</div>
+        <div class="stat-lbl">Questions personnalisées</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-cyan">🏆</div>
+      <div>
+        <div class="stat-val" id="stat-gifts-count">0</div>
+        <div class="stat-lbl">Cadeaux débloqués</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION TABS -->
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('tab-couples')">
+      <span>👥 Suivi des Couples & Parties</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-claims')" id="btn-tab-claims">
+      <span>🎁 Cadeaux et Réclamations</span>
+      <span id="badge-claims-count" class="tab-badge" style="display:none">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-add-question')">
+      <span>➕ Ajouter des Questions / Jeux</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-questions-list')">
+      <span>📚 Banque de Questions Personnalisées</span>
+    </button>
+  </div>
+
+  <!-- TAB 1 : SUIVI DES COUPLES -->
+  <div id="tab-couples" class="tab-content active">
+    <div class="card-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>🎮 Progression et Statut en Direct</span>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          Mise à jour temps réel WebSocket active
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="couples-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Partenaires</th>
+              <th>Statut</th>
+              <th>Niveau</th>
+              <th>Score Cumulé</th>
+              <th>Cadeaux</th>
+              <th>Actions Développeur</th>
+            </tr>
+          </thead>
+          <tbody id="couples-tbody">
+            <tr>
+              <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                Chargement des données...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB NOUVEAU : CADEAUX ET RÉCLAMATIONS -->
+  <div id="tab-claims" class="tab-content">
+    <div class="card-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>🎁 Gestion des Cadeaux et Formulaires de Réclamation</span>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          Consultation et suivi des demandes de récompenses des couples
+        </div>
+      </div>
+
+      <!-- Mini stats réclamations -->
+      <div class="stats-grid" style="margin-bottom: 20px;">
+        <div class="stat-card" style="padding: 14px 18px;">
+          <div class="stat-icon icon-cyan" style="width:38px; height:38px; font-size:1.1rem;">📦</div>
+          <div>
+            <div class="stat-val" id="stat-claims-total" style="font-size: 1.4rem;">0</div>
+            <div class="stat-lbl">Total réclamations</div>
+          </div>
+        </div>
+        <div class="stat-card" style="padding: 14px 18px;">
+          <div class="stat-icon icon-yellow" style="width:38px; height:38px; font-size:1.1rem; background: rgba(245, 158, 11, 0.15); color: #fbbf24;">⏳</div>
+          <div>
+            <div class="stat-val" id="stat-claims-pending" style="font-size: 1.4rem;">0</div>
+            <div class="stat-lbl">En attente</div>
+          </div>
+        </div>
+        <div class="stat-card" style="padding: 14px 18px;">
+          <div class="stat-icon icon-purple" style="width:38px; height:38px; font-size:1.1rem;">⚙️</div>
+          <div>
+            <div class="stat-val" id="stat-claims-processing" style="font-size: 1.4rem;">0</div>
+            <div class="stat-lbl">En cours de traitement</div>
+          </div>
+        </div>
+        <div class="stat-card" style="padding: 14px 18px;">
+          <div class="stat-icon icon-green" style="width:38px; height:38px; font-size:1.1rem;">🎉</div>
+          <div>
+            <div class="stat-val" id="stat-claims-delivered" style="font-size: 1.4rem;">0</div>
+            <div class="stat-lbl">Cadeaux remis</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar Filtres et Recherche -->
+      <div class="claims-toolbar">
+        <div class="toolbar-group">
+          <input type="text" id="claims-search-input" class="search-input" placeholder="🔍 Rechercher par nom, prénom ou WhatsApp..." oninput="filterAndRenderClaims()" />
+          
+          <select id="claims-level-filter" onchange="filterAndRenderClaims()">
+            <option value="ALL">Tous les niveaux cadeaux</option>
+            <option value="4">Niveau 4 (Cadeau 1)</option>
+            <option value="12">Niveau 12 (Cadeau 2)</option>
+            <option value="20">Niveau 20 (Grand Cadeau Final)</option>
+          </select>
+
+          <select id="claims-status-filter" onchange="filterAndRenderClaims()">
+            <option value="ALL">Tous les statuts</option>
+            <option value="EN_ATTENTE">En attente</option>
+            <option value="EN_COURS">En cours de traitement</option>
+            <option value="REMIS">Cadeau remis</option>
+          </select>
+        </div>
+
+        <div class="toolbar-group">
+          <select id="claims-sort-order" onchange="filterAndRenderClaims()">
+            <option value="DATE_DESC">Date : Plus récent d'abord</option>
+            <option value="DATE_ASC">Date : Plus ancien d'abord</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tableau des demandes -->
+      <div style="overflow-x: auto;">
+        <table class="couples-table">
+          <thead>
+            <tr>
+              <th>Date & Heure</th>
+              <th>Statut</th>
+              <th>Couple</th>
+              <th>Niveau & Cadeau</th>
+              <th>Score</th>
+              <th>Destinataire</th>
+              <th>WhatsApp</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="claims-tbody">
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                Chargement des réclamations...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2 : AJOUTER UNE QUESTION OU UN MINI-JEU -->
+  <div id="tab-add-question" class="tab-content">
+    <div class="card-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>➕ Ajouter une Épreuve ou Question à la Saison</span>
+        </div>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">
+          Sauvegarde instantanée dans <code>data/custom_questions.json</code>
+        </span>
+      </div>
+
+      <form id="add-question-form" onsubmit="submitQuestion(event)">
+        <div class="form-grid">
+          
+          <div class="form-group">
+            <label for="q-category">Catégorie / Thème</label>
+            <select id="q-category" required>
+              <option value="habitudes_moi_lui">Nos Habitudes (MOI / LUI)</option>
+              <option value="habitudes_oui_non">Habitudes (OUI / NON)</option>
+              <option value="connaissance_ecrit">Connaissance Partenaire (Écrit)</option>
+              <option value="memoire_couple">Mémoire du Couple (Écrit)</option>
+              <option value="gouts_choix_multiple">Goûts & Préférences (QCM)</option>
+              <option value="qui_fait_ca">Qui Fait Ça ? (MOI / LUI)</option>
+              <option value="meme_pensee">Même Pensée (Synchro)</option>
+              <option value="choix_impossible">Choix Impossible (Dilemme)</option>
+              <option value="scenarios">Scénarios & Dilemmes (QCM)</option>
+              <option value="synchronisation">Synchronisation Pure (QCM)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="q-type">Type de Réponse Attendu</label>
+            <select id="q-type" required onchange="toggleOptionsInput()">
+              <option value="CHOIX_MULTIPLE">Choix Multiple (QCM)</option>
+              <option value="MOI_LUI">MOI / LUI / NOUS LES DEUX</option>
+              <option value="OUI_NON">OUI / NON</option>
+              <option value="ECRIT">Réponse écrite libre</option>
+              <option value="MEME_PENSEE">Même Pensée (Synchronisation)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="q-timer">Timer (secondes)</label>
+            <input type="number" id="q-timer" value="25" min="5" max="120" required />
+          </div>
+
+          <div class="form-group full">
+            <label for="q-text">Intitulé de la Question / Épreuve</label>
+            <input type="text" id="q-text" placeholder="Ex: Quel est le plus grand rêve secret de ton partenaire ?" required />
+          </div>
+
+          <div class="form-group full" id="group-options">
+            <label for="q-options">Options de Choix (séparées par une virgule)</label>
+            <input type="text" id="q-options" placeholder="Ex: Voyager autour du monde, Fonder une entreprise, Vivre au calme, Écrire un livre" />
+          </div>
+
+          <div class="form-group full">
+            <label for="q-hint">Indice ou consigne (Optionnel)</label>
+            <input type="text" id="q-hint" placeholder="Ex: Format attendu ou précision..." />
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 12px 24px;">
+          <span>💾 Enregistrer la question</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TAB 3 : BANQUE PERSONNALISÉE -->
+  <div id="tab-questions-list" class="tab-content">
+    <div class="card-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>📚 Questions personnalisées actives</span>
+        </div>
+      </div>
+      <div id="custom-questions-container" class="questions-grid">
+        <!-- Rempli en JS -->
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="admin-toast" id="admin-toast"></div>
+
+<!-- MODAL AUTHENTIFICATION ADMINISTRATEUR (GATEWAY SÉCURISÉE) -->
+<div id="admin-auth-gate" style="display:none;">
+  <div class="gate-card">
+    <div class="gate-icon">🔐</div>
+    <h2 class="gate-title">Accès Administrateur</h2>
+    <p class="gate-desc">Veuillez entrer le mot de passe pour accéder aux données et fonctionnalités de gestion.</p>
+
+    <div class="gate-error" id="gate-error"></div>
+
+    <form onsubmit="handleGateLogin(event)">
+      <div class="form-group" style="margin-bottom: 18px;">
+        <input type="password" id="gate-password-input" placeholder="Mot de passe d'administration..." autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="btn btn-primary" id="btn-gate-submit" style="width: 100%; justify-content: center; padding: 14px;">
+        <span>Déverrouiller la console</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DÉTAILS D'UNE DEMANDE DE CADEAU -->
+<div class="detail-overlay" id="claim-detail-modal" style="display:none;" onclick="closeClaimDetailOnBackdrop(event)">
+  <div class="detail-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+      <h3 style="font-size:1.2rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+        <span>🎁 Fiche de Réclamation</span>
+        <span id="modal-detail-id" style="font-size:0.75rem; color:var(--text-muted); font-family:monospace;"></span>
+      </h3>
+      <button class="btn btn-secondary btn-sm" onclick="closeClaimDetail()">✕</button>
+    </div>
+
+    <div id="modal-detail-body">
+      <!-- Rempli dynamiquement -->
+    </div>
+
+    <div style="margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <label style="font-size:0.8rem; margin:0;">Changer le statut :</label>
+        <select id="modal-status-select" onchange="changeClaimStatusFromModal()" style="padding:8px 12px; font-size:0.85rem;">
+          <option value="EN_ATTENTE">En attente</option>
+          <option value="EN_COURS">En cours de traitement</option>
+          <option value="REMIS">Cadeau remis</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:8px;">
+        <a id="modal-wa-btn" href="#" target="_blank" class="btn-whatsapp-direct" style="padding:8px 14px; font-size:0.85rem;">
+          <span>💬 Contacter sur WhatsApp</span>
+        </a>
+        <button class="btn btn-secondary btn-sm" onclick="closeClaimDetail()">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIRMATION DE SUPPRESSION D'UN COUPLE -->
+<div class="detail-overlay" id="delete-couple-modal" style="display:none;" onclick="closeDeleteModalOnBackdrop(event)">
+  <div class="detail-card" style="max-width: 520px; border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 20px 50px rgba(239, 68, 68, 0.2);">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <div style="width:44px; height:44px; border-radius:12px; background:rgba(239,68,68,0.15); color:var(--red); display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0;">
+        ⚠️
+      </div>
+      <div>
+        <h3 style="font-size:1.2rem; font-weight:800; color:#fff;">Supprimer ce couple</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted);">Action d'administration irréversible</p>
+      </div>
+    </div>
+
+    <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; font-size: 0.92rem; line-height: 1.5; color: #fecaca;">
+      <p style="margin-bottom: 8px; font-weight: 600;">Voulez-vous vraiment supprimer ce couple ?</p>
+      <p style="font-size: 0.85rem; color: #cbd5e1;">Cette action peut entraîner la suppression de sa progression et de son historique de jeu.</p>
+    </div>
+
+    <div style="background: rgba(255, 255, 255, 0.03); border-radius: 10px; padding: 12px 14px; margin-bottom: 24px; font-size: 0.88rem;">
+      <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+        <span style="color:var(--text-muted);">Code de la partie :</span>
+        <strong id="modal-delete-couple-code" style="color:var(--pink); font-family:monospace; font-size:1rem;">—</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span style="color:var(--text-muted);">Partenaires associés :</span>
+        <strong id="modal-delete-couple-names" style="color:#fff;">—</strong>
+      </div>
+      <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 0.78rem; color: #94a3b8;">
+        ℹ️ <em>Note de sécurité : Si l'un des joueurs possède d'autres couples créés, ses autres parties ne seront pas modifiées ni impactées.</em>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:12px;">
+      <button type="button" class="btn btn-secondary" onclick="closeDeleteCoupleModal()">Annuler</button>
+      <button type="button" class="btn btn-danger" id="btn-confirm-delete-couple" onclick="confirmDeleteCouple()" style="padding:10px 22px;">
+        <span>Confirmer la suppression</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let ws = null;
+  let couplesData = [];
+  let claimsData = [];
+  let customQuestions = [];
+  let currentDetailClaimId = null;
+
+  // Gestion du Token Admin Sécurisé
+  let adminToken = sessionStorage.getItem('complicite_admin_token') || localStorage.getItem('complicite_admin_token') || '';
+
+  function getAuthHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + adminToken
+    };
+  }
+
+  // ==========================================
+  // VÉRIFICATION D'AUTHENTIFICATION AU CHARGEMENT
+  // ==========================================
+  async function checkAuthAndInit() {
+    if (!adminToken) {
+      showAuthGate();
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/verify', {
+        headers: getAuthHeaders()
+      });
+      const data = await res.json();
+      if (data.success && data.valid) {
+        hideAuthGate();
+        initAdminWS();
+        refreshData();
+      } else {
+        showAuthGate();
+      }
+    } catch (e) {
+      showAuthGate();
+    }
+  }
+
+  function showAuthGate() {
+    document.getElementById('admin-auth-gate').style.display = 'flex';
+  }
+
+  function hideAuthGate() {
+    document.getElementById('admin-auth-gate').style.display = 'none';
+  }
+
+  async function handleGateLogin(e) {
+    e.preventDefault();
+    const passInput = document.getElementById('gate-password-input');
+    const errEl = document.getElementById('gate-error');
+    const btn = document.getElementById('btn-gate-submit');
+    const password = (passInput.value || '').trim();
+
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.innerHTML = '<span>Vérification...</span>';
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+      const data = await res.json();
+      if (data.success && data.token) {
+        adminToken = data.token;
+        sessionStorage.setItem('complicite_admin_token', adminToken);
+        localStorage.setItem('complicite_admin_token', adminToken);
+        hideAuthGate();
+        initAdminWS();
+        refreshData();
+        showToast('🔓 Authentification réussie !');
+      } else {
+        errEl.textContent = data.error || 'Mot de passe incorrect. Accès refusé.';
+        errEl.style.display = 'block';
+      }
+    } catch (err) {
+      errEl.textContent = 'Erreur lors de la connexion : ' + err.message;
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Déverrouiller la console</span>';
+    }
+  }
+
+  function adminLogout() {
+    sessionStorage.removeItem('complicite_admin_token');
+    localStorage.removeItem('complicite_admin_token');
+    adminToken = '';
+    if (ws) { ws.close(); ws = null; }
+    showAuthGate();
+    showToast('Session fermée.');
+  }
+
+  // ==========================================
+  // WEBSOCKET TEMPS RÉEL
+  // ==========================================
+  function initAdminWS() {
+    if (!adminToken) return;
+    const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    ws = new WebSocket(`${protocol}//${location.host}`);
+
+    ws.onopen = () => {
+      console.log('Admin WS connecté');
+      ws.send(JSON.stringify({ type: 'ADMIN_AUTH', token: adminToken }));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'ADMIN_DATA') {
+          if (data.couples) {
+            couplesData = data.couples;
+            renderCouples(couplesData);
+            updateStats();
+          }
+          if (data.claims) {
+            claimsData = data.claims;
+            filterAndRenderClaims();
+            updateStats();
+          }
+          if (data.customQuestions) {
+            customQuestions = data.customQuestions;
+            renderCustomQuestions(customQuestions);
+          }
+        } else if (data.type === 'ADMIN_EVENT') {
+          showToast(`⚡ Événement : ${data.event} (${data.coupleCode || ''})`);
+          refreshData();
+        } else if (data.type === 'ADMIN_NEW_CLAIM') {
+          showToast(`🎁 Nouvelle réclamation reçue : ${data.claim?.prenom} ${data.claim?.nom} (Niveau ${data.claim?.levelId})`);
+          refreshData();
+        } else if (data.type === 'ADMIN_CLAIM_UPDATED') {
+          const idx = claimsData.findIndex(c => c.id === data.claim?.id);
+          if (idx !== -1) claimsData[idx] = data.claim;
+          filterAndRenderClaims();
+          updateStats();
+        } else if (data.type === 'ADMIN_QUESTION_ADDED') {
+          showToast('✅ Question enregistrée avec succès !');
+          refreshData();
+        } else if (data.type === 'ADMIN_COUPLE_DELETED') {
+          showToast(`🗑️ ${data.message || 'Couple supprimé.'}`);
+          refreshData();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    ws.onclose = () => {
+      if (adminToken) setTimeout(initAdminWS, 3000);
+    };
+  }
+
+  // ==========================================
+  // CHARGEMENT DES DONNÉES
+  // ==========================================
+  async function refreshData() {
+    if (!adminToken) return;
+    try {
+      const resCouples = await fetch('/api/admin/couples', { headers: getAuthHeaders() });
+      if (resCouples.status === 401) { showAuthGate(); return; }
+      couplesData = await resCouples.json();
+      renderCouples(couplesData);
+
+      const resClaims = await fetch('/api/admin/claims', { headers: getAuthHeaders() });
+      if (resClaims.ok) {
+        claimsData = await resClaims.json();
+        filterAndRenderClaims();
+      }
+
+      updateStats();
+
+      const resQuestions = await fetch('/api/admin/questions', { headers: getAuthHeaders() });
+      if (resQuestions.ok) {
+        const qData = await resQuestions.json();
+        customQuestions = qData.custom || [];
+        renderCustomQuestions(customQuestions);
+      }
+    } catch (err) {
+      console.error('Erreur rafraîchissement:', err);
+    }
+  }
+
+  function updateStats() {
+    document.getElementById('stat-total-couples').textContent = couplesData.length;
+    const active = couplesData.filter(c => c.player1Connected || c.player2Connected).length;
+    document.getElementById('stat-active-couples').textContent = active;
+    document.getElementById('stat-custom-q').textContent = customQuestions.length;
+    const gifts = couplesData.reduce((acc, c) => acc + (c.giftsEarned ? c.giftsEarned.length : 0), 0);
+    document.getElementById('stat-gifts-count').textContent = gifts;
+
+    // Stats des réclamations
+    document.getElementById('stat-claims-total').textContent = claimsData.length;
+    const pending = claimsData.filter(c => c.status === 'EN_ATTENTE').length;
+    const processing = claimsData.filter(c => c.status === 'EN_COURS').length;
+    const delivered = claimsData.filter(c => c.status === 'REMIS').length;
+
+    document.getElementById('stat-claims-pending').textContent = pending;
+    document.getElementById('stat-claims-processing').textContent = processing;
+    document.getElementById('stat-claims-delivered').textContent = delivered;
+
+    // Badge sur l'onglet
+    const badgeEl = document.getElementById('badge-claims-count');
+    if (pending > 0) {
+      badgeEl.textContent = pending;
+      badgeEl.style.display = 'inline-block';
+    } else {
+      badgeEl.style.display = 'none';
+    }
+  }
+
+  function renderCouples(list) {
+    const tbody = document.getElementById('couples-tbody');
+    if (!list || list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">Aucun couple enregistré pour le moment.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(c => {
+      let statusHtml = '';
+      if (c.isPaused) {
+        statusHtml = '<span class="badge-status badge-paused">⏸️ En Pause (Déconnexion)</span>';
+      } else if (c.levelStarted) {
+        statusHtml = `<span class="badge-status badge-in-game">🎮 En Jeu (Q. ${c.currentQuestionIndex + 1})</span>`;
+      } else if (c.player1Connected && c.player2Connected) {
+        statusHtml = '<span class="badge-status badge-in-game">🟢 Prêts / Au Dashboard</span>';
+      } else {
+        statusHtml = '<span class="badge-status badge-waiting">⏳ En attente</span>';
+      }
+
+      const gifts = (c.giftsEarned || []).length;
+      const giftsStr = gifts > 0 ? `🎁 ${gifts} débloqué(s)` : '🔒 Aucun';
+
+      return `
+        <tr>
+          <td><span class="couple-code-badge">${c.code}</span></td>
+          <td>
+            <div class="player-pill">
+              <span class="status-dot ${c.player1Connected ? 'online' : 'offline'}"></span>
+              <span>${c.player1Name || 'J1'}</span>
+            </div>
+            <div class="player-pill">
+              <span class="status-dot ${c.player2Connected ? 'online' : 'offline'}"></span>
+              <span>${c.player2Name || '(En attente)'}</span>
+            </div>
+          </td>
+          <td>${statusHtml}</td>
+          <td><strong>Niveau ${c.currentLevel}</strong> / 20</td>
+          <td><span class="score-chip">${c.totalScore} pts</span></td>
+          <td>${giftsStr}</td>
+          <td>
+            <div class="action-btns">
+              <button class="btn btn-secondary btn-sm" onclick="setCoupleLevel('${c.code}')">🎯 Niveau</button>
+              ${c.levelStarted ? `<button class="btn btn-secondary btn-sm" onclick="forceNextQuestion('${c.code}')">⏭️ Suivant</button>` : ''}
+              <button class="btn btn-secondary btn-sm" onclick="resetCouple('${c.code}')">🔄 Reset</button>
+              <button class="btn btn-danger btn-sm" onclick="openDeleteCoupleModal('${c.code}', '${c.player1Name ? c.player1Name.replace(/'/g, "\\'") : ''}', '${c.player2Name ? c.player2Name.replace(/'/g, "\\'") : ''}')" title="Supprimer ce couple">🗑️ Supprimer</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ==========================================
+  // GESTION DES CADEAUX ET RÉCLAMATIONS
+  // ==========================================
+
+  function getStatusLabel(status) {
+    switch (status) {
+      case 'EN_ATTENTE': return '⏳ En attente';
+      case 'EN_COURS': return '⚙️ En cours';
+      case 'REMIS': return '✅ Cadeau remis';
+      default: return status || 'En attente';
+    }
+  }
+
+  function formatDate(ts) {
+    if (!ts) return '—';
+    const d = new Date(ts);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} à ${hours}:${min}`;
+  }
+
+  function filterAndRenderClaims() {
+    const q = (document.getElementById('claims-search-input')?.value || '').toLowerCase().trim();
+    const levelFilter = document.getElementById('claims-level-filter')?.value || 'ALL';
+    const statusFilter = document.getElementById('claims-status-filter')?.value || 'ALL';
+    const sortOrder = document.getElementById('claims-sort-order')?.value || 'DATE_DESC';
+
+    let list = [...claimsData];
+
+    // Recherche par nom, prénom ou WhatsApp
+    if (q) {
+      list = list.filter(c => {
+        const full = `${c.nom || ''} ${c.prenom || ''} ${c.whatsapp || ''} ${c.coupleCode || ''} ${c.ville || ''}`.toLowerCase();
+        return full.includes(q);
+      });
+    }
+
+    // Filtre par niveau
+    if (levelFilter !== 'ALL') {
+      list = list.filter(c => String(c.levelId) === levelFilter);
+    }
+
+    // Filtre par statut
+    if (statusFilter !== 'ALL') {
+      list = list.filter(c => c.status === statusFilter);
+    }
+
+    // Tri par date
+    list.sort((a, b) => {
+      const tA = a.createdAt || 0;
+      const tB = b.createdAt || 0;
+      return sortOrder === 'DATE_ASC' ? tA - tB : tB - tA;
+    });
+
+    renderClaimsTable(list);
+  }
+
+  function renderClaimsTable(list) {
+    const tbody = document.getElementById('claims-tbody');
+    if (!list || list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Aucune demande de cadeau ne correspond aux critères sélectionnés.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(c => {
+      const isNew = c.status === 'EN_ATTENTE';
+      const cleanWa = (c.whatsapp || '').replace(/[^0-9]/g, '');
+      const waMsg = encodeURIComponent(`Bonjour ${c.prenom} ! Nous vous contactons concernant votre récompense du Niveau ${c.levelId} sur Complicité (${c.giftName}).`);
+      const waUrl = cleanWa ? `https://wa.me/${cleanWa}?text=${waMsg}` : '#';
+
+      return `
+        <tr>
+          <td>
+            <div style="font-size:0.85rem; font-weight:600;">${formatDate(c.createdAt)}</div>
+          </td>
+          <td>
+            <div style="display:inline-flex; align-items:center;">
+              <select onchange="updateClaimStatusDirect('${c.id}', this.value)" class="badge-claim-status badge-claim-${(c.status || 'EN_ATTENTE').toLowerCase()}" style="font-family:inherit; outline:none; cursor:pointer;">
+                <option value="EN_ATTENTE" ${c.status === 'EN_ATTENTE' ? 'selected' : ''}>⏳ En attente</option>
+                <option value="EN_COURS" ${c.status === 'EN_COURS' ? 'selected' : ''}>⚙️ En cours</option>
+                <option value="REMIS" ${c.status === 'REMIS' ? 'selected' : ''}>✅ Cadeau remis</option>
+              </select>
+              ${isNew ? '<span class="badge-new-claim">Nouveau</span>' : ''}
+            </div>
+          </td>
+          <td>
+            <div><span class="couple-code-badge">${c.coupleCode}</span></div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${c.player1Name} & ${c.player2Name}</div>
+          </td>
+          <td>
+            <div style="font-weight:700; color:#fbbf24;">Niveau ${c.levelId}</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">${c.giftName}</div>
+          </td>
+          <td>
+            <span class="score-chip">${c.scoreAtClaim || 0} pts</span>
+          </td>
+          <td>
+            <div style="font-weight:700;">${c.nom} ${c.prenom}</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">📍 ${c.ville}</div>
+          </td>
+          <td>
+            <div style="font-family:monospace; font-weight:600; margin-bottom:4px;">${c.whatsapp}</div>
+            ${cleanWa ? `<a href="${waUrl}" target="_blank" class="btn-whatsapp-direct">💬 WhatsApp</a>` : ''}
+          </td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="openClaimDetail('${c.id}')">👁️ Détails</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  async function updateClaimStatusDirect(claimId, newStatus) {
+    try {
+      const res = await fetch(`/api/admin/claims/${claimId}/status`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status: newStatus })
+      });
+      const data = await res.json();
+      if (data.success && data.claim) {
+        const idx = claimsData.findIndex(c => c.id === claimId);
+        if (idx !== -1) claimsData[idx] = data.claim;
+        filterAndRenderClaims();
+        updateStats();
+        showToast(`Statut mis à jour : ${getStatusLabel(newStatus)}`);
+      }
+    } catch(err) {
+      alert('Erreur lors de la mise à jour du statut : ' + err.message);
+    }
+  }
+
+  function openClaimDetail(claimId) {
+    const claim = claimsData.find(c => c.id === claimId);
+    if (!claim) return;
+    currentDetailClaimId = claimId;
+
+    document.getElementById('modal-detail-id').textContent = claim.id;
+    document.getElementById('modal-status-select').value = claim.status || 'EN_ATTENTE';
+
+    const cleanWa = (claim.whatsapp || '').replace(/[^0-9]/g, '');
+    const waMsg = encodeURIComponent(`Bonjour ${claim.prenom} ! Nous vous contactons suite à votre réclamation sur Complicité pour le cadeau du Niveau ${claim.levelId}.`);
+    const waBtn = document.getElementById('modal-wa-btn');
+    if (cleanWa) {
+      waBtn.href = `https://wa.me/${cleanWa}?text=${waMsg}`;
+      waBtn.style.display = 'inline-flex';
+    } else {
+      waBtn.style.display = 'none';
+    }
+
+    const bodyEl = document.getElementById('modal-detail-body');
+    bodyEl.innerHTML = `
+      <div class="detail-row">
+        <span class="detail-label">Identifiant Couple</span>
+        <span class="detail-val"><span class="couple-code-badge">${claim.coupleCode}</span></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Partenaires de jeu</span>
+        <span class="detail-val">${claim.player1Name} & ${claim.player2Name}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Niveau débloqué</span>
+        <span class="detail-val" style="color:#fbbf24;">Niveau ${claim.levelId}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Récompense</span>
+        <span class="detail-val">${claim.giftName}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Score au déblocage</span>
+        <span class="detail-val score-chip">${claim.scoreAtClaim || 0} points</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Date & Heure de soumission</span>
+        <span class="detail-val">${formatDate(claim.createdAt)}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Nom</span>
+        <span class="detail-val">${claim.nom}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Prénom</span>
+        <span class="detail-val">${claim.prenom}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Ville</span>
+        <span class="detail-val">📍 ${claim.ville}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Adresse complète de livraison</span>
+        <span class="detail-val" style="max-width:60%; word-break:break-word;">🏠 ${claim.adresse}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Numéro WhatsApp</span>
+        <span class="detail-val" style="font-family:monospace; color:#34d399;">${claim.whatsapp}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Statut actuel</span>
+        <span class="detail-val">
+          <span class="badge-claim-status badge-claim-${(claim.status || 'EN_ATTENTE').toLowerCase()}">${getStatusLabel(claim.status)}</span>
+        </span>
+      </div>
+    `;
+
+    document.getElementById('claim-detail-modal').style.display = 'flex';
+  }
+
+  function closeClaimDetail() {
+    document.getElementById('claim-detail-modal').style.display = 'none';
+    currentDetailClaimId = null;
+  }
+
+  function closeClaimDetailOnBackdrop(e) {
+    if (e.target.id === 'claim-detail-modal') {
+      closeClaimDetail();
+    }
+  }
+
+  async function changeClaimStatusFromModal() {
+    if (!currentDetailClaimId) return;
+    const newStatus = document.getElementById('modal-status-select').value;
+    await updateClaimStatusDirect(currentDetailClaimId, newStatus);
+    openClaimDetail(currentDetailClaimId);
+  }
+
+  function renderCustomQuestions(list) {
+    const container = document.getElementById('custom-questions-container');
+    if (!list || list.length === 0) {
+      container.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">Aucune question personnalisée ajoutée pour l\'instant.</p>';
+      return;
+    }
+
+    container.innerHTML = list.map(q => `
+      <div class="q-card">
+        <div>
+          <div class="q-cat">${q.category} · ${q.type}</div>
+          <div class="q-text">${q.text}</div>
+          ${q.options ? `<div style="font-size:0.8rem; color:#c4b5fd; margin-top:8px;">Options : ${q.options.join(' | ')}</div>` : ''}
+        </div>
+        <div class="q-footer">
+          <span>⏱️ ${q.timer}s</span>
+          <button class="btn btn-danger btn-sm" onclick="deleteQuestion('${q.id}')">Supprimer</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ==========================================
+  // ACTIONS ADMIN SUR LES COUPLES
+  // ==========================================
+  let pendingDeleteCoupleCode = null;
+
+  function openDeleteCoupleModal(code, p1Name, p2Name) {
+    pendingDeleteCoupleCode = code;
+    document.getElementById('modal-delete-couple-code').textContent = code;
+    const namesStr = `${p1Name || 'Joueur 1'} & ${p2Name || 'En attente'}`;
+    document.getElementById('modal-delete-couple-names').textContent = namesStr;
+    const btn = document.getElementById('btn-confirm-delete-couple');
+    btn.disabled = false;
+    btn.innerHTML = '<span>Confirmer la suppression</span>';
+    document.getElementById('delete-couple-modal').style.display = 'flex';
+  }
+
+  function closeDeleteCoupleModal() {
+    pendingDeleteCoupleCode = null;
+    document.getElementById('delete-couple-modal').style.display = 'none';
+  }
+
+  function closeDeleteModalOnBackdrop(e) {
+    if (e.target.id === 'delete-couple-modal') {
+      closeDeleteCoupleModal();
+    }
+  }
+
+  async function confirmDeleteCouple() {
+    if (!pendingDeleteCoupleCode) return;
+    const code = pendingDeleteCoupleCode;
+    const btn = document.getElementById('btn-confirm-delete-couple');
+    btn.disabled = true;
+    btn.innerHTML = '<span>Suppression en cours...</span>';
+
+    try {
+      // 1. Appel REST sécurisé
+      const res = await fetch(`/api/admin/couples/${encodeURIComponent(code)}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        showToast(`🗑️ Couple ${code} supprimé avec succès.`);
+        closeDeleteCoupleModal();
+        refreshData();
+      } else {
+        alert(data.error || 'Erreur lors de la suppression du couple.');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Confirmer la suppression</span>';
+      }
+    } catch (err) {
+      // Fallback via WebSocket si réseau indisponible
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'ADMIN_DELETE_COUPLE', coupleCode: code }));
+        showToast(`🗑️ Demande de suppression envoyée pour le couple ${code}.`);
+        closeDeleteCoupleModal();
+        refreshData();
+      } else {
+        alert('Erreur de communication : ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<span>Confirmer la suppression</span>';
+      }
+    }
+  }
+
+  function resetCouple(code) {
+    if (confirm(`Réinitialiser la progression du couple ${code} au Niveau 1 ?`)) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'ADMIN_RESET_COUPLE', coupleCode: code }));
+      }
+    }
+  }
+
+  function setCoupleLevel(code) {
+    const lvl = prompt(`Définir le niveau pour le couple ${code} (1 à 20) :`, '1');
+    if (lvl && parseInt(lvl, 10) >= 1 && parseInt(lvl, 10) <= 20) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'ADMIN_SET_LEVEL', coupleCode: code, level: lvl }));
+      }
+    }
+  }
+
+  function forceNextQuestion(code) {
+    if (confirm(`Forcer le passage à la question suivante pour le couple ${code} ?`)) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'ADMIN_FORCE_NEXT', coupleCode: code }));
+      }
+    }
+  }
+
+  async function submitQuestion(e) {
+    e.preventDefault();
+    const payload = {
+      category: document.getElementById('q-category').value,
+      type: document.getElementById('q-type').value,
+      timer: document.getElementById('q-timer').value,
+      text: document.getElementById('q-text').value,
+      options: document.getElementById('q-options').value,
+      hint: document.getElementById('q-hint').value,
+    };
+
+    try {
+      const res = await fetch('/api/admin/questions', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('✅ Question enregistrée avec succès !');
+        document.getElementById('add-question-form').reset();
+        switchTab('tab-questions-list');
+        refreshData();
+      }
+    } catch (err) {
+      alert('Erreur lors de l\'enregistrement : ' + err.message);
+    }
+  }
+
+  async function deleteQuestion(id) {
+    if (confirm('Supprimer cette question personnalisée ?')) {
+      try {
+        await fetch(`/api/admin/questions/${id}`, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+        showToast('Question supprimée');
+        refreshData();
+      } catch (err) {
+        alert('Erreur: ' + err.message);
+      }
+    }
+  }
+
+  function toggleOptionsInput() {
+    const type = document.getElementById('q-type').value;
+    const group = document.getElementById('group-options');
+    group.style.display = (type === 'CHOIX_MULTIPLE') ? 'flex' : 'none';
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach(btn => {
+      if (btn.getAttribute('onclick')?.includes(tabId)) {
+        btn.classList.add('active');
+      }
+    });
+
+    const target = document.getElementById(tabId);
+    if (target) target.classList.add('active');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('admin-toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3500);
+  }
+
+  // Initialisation avec vérification de sécurité
+  checkAuthAndInit();
+  toggleOptionsInput();
+</script>
+</body>
+</html>
