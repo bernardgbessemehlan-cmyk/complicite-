@@ -224,12 +224,14 @@ function broadcastToAdmins(payload) {
 // LOGIQUE DE QUESTIONS & NIVEAUX
 // ============================================================
 
-function buildLevelQuestions(levelId) {
+function buildLevelQuestions(levelId, couple = null) {
   const levelDef = LEVELS.find(l => l.id === levelId);
   if (!levelDef) return [];
 
   const allQuestions = [];
-  const usedIds = [];
+  // Historique des questions déjà jouées par ce couple pour éviter toute répétition
+  const playedByCouple = (couple && Array.isArray(couple.usedQuestionIds)) ? [...couple.usedQuestionIds] : [];
+  const usedIds = [...playedByCouple];
 
   for (const mg of levelDef.miniGames) {
     const questions = selectQuestions(mg.cats, mg.count, usedIds);
@@ -253,7 +255,32 @@ function buildLevelQuestions(levelId) {
     allQuestions.push(...tagged);
   }
 
-  return allQuestions;
+  // GARANTIE ABSOLUE : Toujours exactement 50 questions par niveau
+  if (allQuestions.length < 50) {
+    const needed = 50 - allQuestions.length;
+    const allCategories = Object.keys(questionBank);
+    const fillerQuestions = selectQuestions(allCategories, needed, usedIds);
+    fillerQuestions.forEach(q => {
+      usedIds.push(q.id);
+      allQuestions.push({
+        ...q,
+        miniGameType: q.miniGameType || MINI_GAMES.CONNAISSANCE,
+        miniGameName: q.miniGameName || getMiniGameName(q.miniGameType || MINI_GAMES.CONNAISSANCE)
+      });
+    });
+  }
+
+  // Enregistrer toutes les questions de ce niveau dans l'historique du couple
+  if (couple) {
+    if (!Array.isArray(couple.usedQuestionIds)) couple.usedQuestionIds = [];
+    allQuestions.forEach(q => {
+      if (!couple.usedQuestionIds.includes(q.id)) {
+        couple.usedQuestionIds.push(q.id);
+      }
+    });
+  }
+
+  return allQuestions.slice(0, 50);
 }
 
 function getMiniGameName(type) {
@@ -321,7 +348,7 @@ function startLevel(coupleCode, levelId) {
   const levelDef = LEVELS.find(l => l.id === levelId);
   if (!levelDef) return;
 
-  const questions = buildLevelQuestions(levelId);
+  const questions = buildLevelQuestions(levelId, couple);
   
   couple.currentLevelId = levelId;
   couple.currentLevelDef = levelDef;
@@ -1544,9 +1571,20 @@ app.get('/api/admin/questions', requireAdminAuth, (req, res) => {
 
 // Ajouter une nouvelle question ou épreuve (protégé)
 app.post('/api/admin/questions', requireAdminAuth, (req, res) => {
-  const { category, text, type, timer, options, hint } = req.body;
+  const { category, text, type, timer, options, hint, equivalences } = req.body;
   if (!category || !text || !type) {
     return res.status(400).json({ error: 'Champs category, text et type requis.' });
+  }
+
+  let parsedEquivalences = [];
+  if (Array.isArray(equivalences)) {
+    parsedEquivalences = equivalences;
+  } else if (typeof equivalences === 'string' && equivalences.trim()) {
+    if (equivalences.includes('|')) {
+      parsedEquivalences = equivalences.split('|').map(g => g.split(',').map(s => s.trim()).filter(Boolean));
+    } else {
+      parsedEquivalences = [equivalences.split(',').map(s => s.trim()).filter(Boolean)];
+    }
   }
 
   const newQ = {
@@ -1558,6 +1596,7 @@ app.post('/api/admin/questions', requireAdminAuth, (req, res) => {
     difficulty: 2,
     options: Array.isArray(options) ? options : (options ? options.split(',').map(s => s.trim()) : null),
     hint: hint || null,
+    equivalences: parsedEquivalences.length > 0 ? parsedEquivalences : undefined,
     isCustom: true
   };
 

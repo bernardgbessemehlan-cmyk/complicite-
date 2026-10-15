@@ -42,6 +42,7 @@ function loadCouples() {
       }
       if (!c.player1Name) c.player1Name = 'Joueur 1';
       if (!c.player1Role) c.player1Role = 'HOMME';
+      if (!Array.isArray(c.usedQuestionIds)) c.usedQuestionIds = [];
     }
     return data;
   } catch (err) {
@@ -79,6 +80,7 @@ function saveCouples(couplesData) {
         currentTimer: c.currentTimer || 20,
         remainingTimer: c.remainingTimer || 20,
         answers: c.answers || {},
+        usedQuestionIds: Array.isArray(c.usedQuestionIds) ? c.usedQuestionIds : [],
         createdAt: c.createdAt || Date.now(),
         updatedAt: c.updatedAt || Date.now()
       };

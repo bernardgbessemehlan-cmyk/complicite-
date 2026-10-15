@@ -1,0 +1,8 @@
+# Robots.txt — Complicité
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/admin/
+
+# Sitemaps
+Sitemap: https://complicite.app/sitemap.xml

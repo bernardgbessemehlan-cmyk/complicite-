@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Complicité — Dashboard Administrateur & Développeur</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -577,10 +577,23 @@
     }
 
     @media (max-width: 768px) {
-      body { padding: 12px; }
-      .admin-header { flex-direction: column; align-items: flex-start; }
+      body { padding: 12px 10px; }
+      .admin-header { flex-direction: column; align-items: stretch; gap: 14px; }
+      .header-actions { flex-wrap: wrap; gap: 8px; }
+      .header-actions .btn { flex: 1; text-align: center; justify-content: center; font-size: 0.85rem; padding: 10px 12px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .couples-table th:nth-child(5), .couples-table td:nth-child(5) { display: none; }
-      .claims-toolbar { flex-direction: column; align-items: stretch; }
+      .claims-toolbar { flex-direction: column; align-items: stretch; gap: 10px; }
+      .toolbar-group { flex-direction: column; width: 100%; gap: 8px; }
+      .toolbar-group select, .toolbar-group input { width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-card { padding: 14px; }
+      .tabs-nav { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+      .tab-btn { flex-shrink: 0; font-size: 0.85rem; padding: 10px 14px; }
+      .form-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -843,9 +856,12 @@
             <input type="text" id="q-options" placeholder="Ex: Voyager autour du monde, Fonder une entreprise, Vivre au calme, Écrire un livre" />
           </div>
 
-          <div class="form-group full">
-            <label for="q-hint">Indice ou consigne (Optionnel)</label>
-            <input type="text" id="q-hint" placeholder="Ex: Format attendu ou précision..." />
+          <div class="form-group full" id="group-equivalences">
+            <label for="q-equivalences">Équivalences & Synonymes acceptés (Pour questions écrites)</label>
+            <input type="text" id="q-equivalences" placeholder="Ex: bleu, azur, cyan | rouge, pourpre, bordeaux" />
+            <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px; display: block;">
+              Séparez les termes équivalents par une virgule. Utilisez "|" pour créer plusieurs groupes distincts.
+            </small>
           </div>
 
         </div>
@@ -1589,7 +1605,8 @@
       timer: document.getElementById('q-timer').value,
       text: document.getElementById('q-text').value,
       options: document.getElementById('q-options').value,
-      hint: document.getElementById('q-hint').value,
+      hint: document.getElementById('q-hint') ? document.getElementById('q-hint').value : '',
+      equivalences: document.getElementById('q-equivalences') ? document.getElementById('q-equivalences').value : '',
     };
 
     try {

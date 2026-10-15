@@ -148,9 +148,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  background: rgba(10, 8, 24, 0.85);
+  padding: max(16px, calc(14px + env(safe-area-inset-top, 0px))) 20px 16px;
+  background: rgba(10, 8, 24, 0.88);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-glass);
 }
 
@@ -181,8 +182,8 @@ body {
 
 .screen-body {
   flex: 1;
-  padding: 24px 20px 100px;
-  max-width: 480px;
+  padding: 24px 20px max(100px, calc(80px + env(safe-area-inset-bottom, 0px)));
+  max-width: 520px;
   width: 100%;
   margin: 0 auto;
 }
@@ -906,9 +907,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: max(14px, calc(12px + env(safe-area-inset-top, 0px))) 20px 14px;
   background: rgba(10, 8, 24, 0.9);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-glass);
   flex-shrink: 0;
 }
@@ -1653,22 +1655,417 @@ body {
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
 /* ============================================================
-   RESPONSIVE ADJUSTMENTS
+   RESPONSIVE DESIGN MULTI-ÉCRANS COMPLET & UNIVERSEL
+   (Mobiles compacts, Phablettes, Tablettes, Laptops, Desktop, 4K)
    ============================================================ */
 
-@media (max-height: 700px) {
-  .splash-content { gap: 10px; padding: 24px; }
-  .logo-title { font-size: 2.8rem; }
-  .logo-hearts { width: 60px; height: 38px; }
-  .timer-ring-container { width: 60px; height: 60px; }
-  .timer-ring { width: 60px; height: 60px; }
-  .timer-number { font-size: 1.1rem; }
-  .question-text { font-size: 1rem; }
+/* 1. TOUS ÉCRANS LARGES : TABLETTES & DESKTOPS (min-width: 600px) */
+@media (min-width: 600px) {
+  /* Conteneur d'application centré et harmonieux */
+  .screen-header {
+    padding-left: max(24px, calc((100vw - 540px) / 2));
+    padding-right: max(24px, calc((100vw - 540px) / 2));
+  }
+  
+  .game-header {
+    padding-left: max(24px, calc((100vw - 540px) / 2));
+    padding-right: max(24px, calc((100vw - 540px) / 2));
+  }
+
+  .screen-body {
+    padding: 32px 28px max(110px, calc(90px + env(safe-area-inset-bottom, 0px)));
+    max-width: 540px;
+  }
+
+  .choice-cards {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .choice-card {
+    flex: 1;
+    min-height: 180px;
+    padding: 24px 20px;
+  }
+
+  /* Centrage des zones de jeu */
+  .question-area,
+  .answer-area,
+  .timer-section,
+  .game-progress-bar,
+  .splash-content,
+  .result-content,
+  .level-start-content,
+  .level-end-content,
+  .season-end-content {
+    max-width: 540px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Grille des réponses QCM à 4 choix en 2x2 */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    width: 100%;
+  }
+
+  .options-grid .answer-btn {
+    min-height: 80px;
+    padding: 16px 20px;
+  }
+
+  .moi-lui-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .moi-lui-group .answer-btn-nous {
+    grid-column: span 2;
+  }
+
+  .couples-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
 }
 
-@media (min-width: 600px) {
-  .screen-body { padding: 32px 40px 100px; }
-  .choice-cards { flex-direction: row; }
+/* 2. GRANDES TABLETTES ET ORDINATEURS PORTABLES (min-width: 900px) */
+@media (min-width: 900px) {
+  body {
+    background: radial-gradient(circle at 50% 25%, #18133b 0%, #0a0818 70%);
+  }
+
+  .screen {
+    align-items: center;
+  }
+
+  .screen-header {
+    padding-left: max(32px, calc((100vw - 560px) / 2));
+    padding-right: max(32px, calc((100vw - 560px) / 2));
+  }
+
+  .game-header {
+    padding-left: max(32px, calc((100vw - 560px) / 2));
+    padding-right: max(32px, calc((100vw - 560px) / 2));
+  }
+
+  .screen-body,
+  .question-area,
+  .answer-area,
+  .timer-section,
+  .game-progress-bar,
+  .splash-content,
+  .result-content,
+  .level-start-content,
+  .level-end-content,
+  .season-end-content {
+    max-width: 560px;
+  }
+
+  /* Effets de survol enrichis sur Desktop */
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .choice-card:hover,
+  .answer-btn:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* 3. MOBILES COMPACTS (max-width: 420px) */
+@media (max-width: 420px) {
+  .screen-body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .logo-title {
+    font-size: 2.9rem;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.88rem;
+  }
+
+  .choice-card {
+    padding: 18px 16px;
+  }
+
+  .answer-btn {
+    padding: 15px 18px;
+    font-size: 0.95rem;
+  }
+
+  .question-text {
+    font-size: 1.05rem;
+  }
+}
+
+/* 4. TRÈS PETITS ÉCRANS MOBILES (iPhone SE, Galaxy Fold plié: max-width: 360px) */
+@media (max-width: 360px) {
+  .screen-header {
+    padding: 12px 14px;
+  }
+
+  .logo-small {
+    font-size: 1.25rem;
+  }
+
+  .screen-body {
+    padding: 16px 12px max(80px, calc(70px + env(safe-area-inset-bottom, 0px)));
+  }
+
+  .splash-content {
+    padding: 24px 14px;
+    gap: 12px;
+  }
+
+  .logo-title {
+    font-size: 2.4rem;
+  }
+
+  .logo-subtitle {
+    font-size: 0.82rem;
+  }
+
+  .splash-tagline {
+    font-size: 0.88rem;
+  }
+
+  .section-title {
+    font-size: 1.35rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.82rem;
+  }
+
+  .choice-card {
+    padding: 14px 12px;
+    gap: 8px;
+  }
+
+  .choice-icon {
+    font-size: 1.8rem;
+  }
+
+  .choice-title {
+    font-size: 1.05rem;
+  }
+
+  .choice-desc {
+    font-size: 0.78rem;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 13px 16px;
+    font-size: 0.9rem;
+  }
+
+  .role-selector {
+    gap: 8px;
+  }
+
+  .role-btn {
+    padding: 12px 8px;
+    font-size: 0.82rem;
+  }
+
+  .role-emoji {
+    font-size: 1.4rem;
+  }
+
+  .code-input {
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    padding: 12px 14px;
+  }
+
+  .timer-ring-container, .timer-ring {
+    width: 60px;
+    height: 60px;
+  }
+
+  .timer-number {
+    font-size: 1.1rem;
+  }
+
+  .question-area {
+    padding: 8px 12px;
+  }
+
+  .question-text {
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
+
+  .answer-area {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .answer-btn {
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    border-radius: var(--radius-md);
+  }
+
+  .oui-non-group {
+    gap: 8px;
+  }
+
+  .answer-btn-oui, .answer-btn-non {
+    font-size: 1rem;
+    padding: 12px 10px;
+  }
+
+  .lobby-avatar-row {
+    gap: 12px;
+  }
+
+  .avatar-circle {
+    width: 52px;
+    height: 52px;
+    font-size: 1.5rem;
+  }
+
+  .avatar-name {
+    font-size: 0.82rem;
+  }
+
+  .score-hero-card {
+    padding: 18px 14px;
+  }
+
+  .score-hero-value {
+    font-size: 1.9rem;
+  }
+
+  .current-level-card {
+    padding: 18px 14px;
+  }
+
+  /* Modales sur petits écrans */
+  .pause-modal,
+  .quit-modal,
+  .secret-admin-modal,
+  .gift-claim-modal {
+    padding: 20px 16px;
+    max-width: 95vw;
+  }
+}
+
+/* 5. ÉCRANS DE FAIBLE HAUTEUR & MODE PAYSAGE (max-height: 680px) */
+@media (max-height: 680px) {
+  .splash-content {
+    gap: 10px;
+    padding: 18px 20px;
+  }
+
+  .logo-title {
+    font-size: 2.3rem;
+  }
+
+  .logo-hearts {
+    width: 52px;
+    height: 32px;
+  }
+
+  .screen-body {
+    padding-top: 14px;
+    padding-bottom: max(60px, calc(50px + env(safe-area-inset-bottom, 0px)));
+  }
+
+  .timer-section {
+    padding: 8px 16px 4px;
+  }
+
+  .timer-ring-container, .timer-ring {
+    width: 52px;
+    height: 52px;
+  }
+
+  .timer-number {
+    font-size: 0.98rem;
+  }
+
+  .partner-indicator {
+    font-size: 0.7rem;
+  }
+
+  .question-area {
+    padding: 6px 16px;
+  }
+
+  .question-number {
+    margin-bottom: 4px;
+  }
+
+  .minigame-badge {
+    margin-bottom: 6px;
+    padding: 2px 10px;
+    font-size: 0.7rem;
+  }
+
+  .question-text {
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+
+  .answer-area {
+    padding: 6px 16px;
+    gap: 8px;
+  }
+
+  .answer-btn {
+    padding: 10px 16px;
+    min-height: auto;
+  }
+
+  .text-answer-input {
+    rows: 2;
+    padding: 10px 14px;
+  }
+}
+
+/* 6. MODE PAYSAGE SUR MOBILE (orientation: landscape et max-height: 500px) */
+@media (orientation: landscape) and (max-height: 500px) {
+  .screen-header {
+    padding: 8px 16px;
+  }
+
+  #screen-game {
+    overflow-y: auto;
+  }
+
+  .timer-section {
+    flex-direction: row;
+    justify-content: center;
+    gap: 14px;
+    padding: 6px 14px;
+  }
+
+  .timer-ring-container, .timer-ring {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 0;
+  }
+
+  .timer-number {
+    font-size: 0.88rem;
+  }
+
+  .options-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* ============================================================
