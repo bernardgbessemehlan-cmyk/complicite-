@@ -197,7 +197,9 @@
   // WEBSOCKET
   // ============================================================
 
-  const WS_URL = `ws://${location.hostname}:${location.port}`;
+ 
+const WS_URL = `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}`;
+
 
   function connectWS() {
     ws = new WebSocket(WS_URL);
